@@ -3,9 +3,9 @@ import { Header } from "../components/Header";
 
 export default function Document() {
   return (
-    <Html lang="ja">
+    <Html lang="ja" data-theme="cupcake">
       <Head />
-      <body className="bg-slate-50" style={{ height: "100vh" }}>
+      <body className="bg-slate-50" style={{ minHeight: "100vh" }}>
         <Header />
         <Main />
         <NextScript />
