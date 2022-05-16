@@ -1,4 +1,5 @@
 import { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import path from "path";
 import { useEffect, useState } from "react";
@@ -7,8 +8,8 @@ import { asyncReader } from "../../lib/async-reader";
 type PogRecord = {
   owner: string;
   horse: string;
-  price: string;
-  point: string;
+  price: number;
+  point: number;
 };
 
 export const getStaticProps: GetStaticProps<{
@@ -26,7 +27,7 @@ export const getStaticProps: GetStaticProps<{
   const pogData: PogRecord[] = [];
 
   for await (const line of reader) {
-    pogData.push(line);
+    pogData.push({ ...line, price: +line.price, point: +line.point });
   }
 
   return {
@@ -69,6 +70,8 @@ const ChibaIndex: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
     setDataSource(filtered);
   };
 
+  const isSorted = (key: keyof PogRecord) => sortedKey === key;
+
   useEffect(() => {
     const sorted = Array.from(dataSource).sort((a, b) => {
       if (a[sortedKey] > b[sortedKey]) {
@@ -83,55 +86,97 @@ const ChibaIndex: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   }, [sortedKey, orderBy]);
 
   return (
-    <div className="artboard p-5">
-      <div className="text-sm breadcrumbs">
-        <ul>
-          <li>
-            <Link href={"/"}>
-              <a>TOP</a>
-            </Link>
-          </li>
-          <li>千葉サラブレッドセール2022</li>
-        </ul>
-      </div>
+    <>
+      <Head>
+        <title>千葉サラブレッドセール2022 | おうちPOG</title>
+        <meta name="description" content="POG" />
+      </Head>
+      <div className="artboard p-5">
+        <div className="text-sm breadcrumbs">
+          <ul>
+            <li>
+              <Link href={"/"}>
+                <a>TOP</a>
+              </Link>
+            </li>
+            <li>千葉サラブレッドセール2022</li>
+          </ul>
+        </div>
 
-      <div className="flex-row flex mt-4 justify-start">
-        {owners.map((owner) => (
-          <label className="label cursor-pointer" key={`checkbox-${owner}`}>
-            <input
-              type="checkbox"
-              className="checkbox"
-              defaultChecked={true}
-              onChange={(event) => ownerFilter(owner, event.target.checked)}
-            />
-            <span className="label-text ml-2">{owner}</span>
-          </label>
-        ))}
-      </div>
+        <div className="flex-row flex mt-4 justify-start">
+          {owners.map((owner) => (
+            <label className="label cursor-pointer" key={`checkbox-${owner}`}>
+              <input
+                type="checkbox"
+                className="checkbox checkbox-sm"
+                defaultChecked={true}
+                onChange={(event) => ownerFilter(owner, event.target.checked)}
+              />
+              <span className="label-text ml-2 text-sm">{owner}</span>
+            </label>
+          ))}
+        </div>
 
-      <div className="overflow-x-auto mt-8">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <td onClick={() => sort("owner")}>オーナー</td>
-              <th onClick={() => sort("horse")}>馬名</th>
-              <th onClick={() => sort("price")}>購買価格</th>
-              <th onClick={() => sort("point")}>ポイント</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dataSource.map((row) => (
-              <tr key={`${row.owner}-${row.horse}`}>
-                <td>{row.owner}</td>
-                <td>{row.horse}</td>
-                <td>{row.price}円</td>
-                <td>{row.point}pt</td>
+        <div className="overflow-x-auto mt-8">
+          <table className="table w-full">
+            <thead>
+              <tr>
+                <td
+                  onClick={() => sort("owner")}
+                  className={
+                    isSorted("owner")
+                      ? " box-border border-b-2 border-b-accent"
+                      : ""
+                  }
+                >
+                  オーナー
+                </td>
+                <th
+                  onClick={() => sort("horse")}
+                  className={
+                    isSorted("horse")
+                      ? " box-border border-b-2 border-b-accent"
+                      : ""
+                  }
+                >
+                  馬名
+                </th>
+                <th
+                  onClick={() => sort("price")}
+                  className={
+                    isSorted("price")
+                      ? " box-border border-b-2 border-b-accent"
+                      : ""
+                  }
+                >
+                  購買価格
+                </th>
+                <th
+                  onClick={() => sort("point")}
+                  className={
+                    isSorted("point")
+                      ? " box-border border-b-2 border-b-accent"
+                      : ""
+                  }
+                >
+                  ポイント
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {dataSource.map((row) => (
+                <tr key={`${row.owner}-${row.horse}`}>
+                  <td>{row.owner}</td>
+                  <td>{row.horse}</td>
+                  <td>{row.price} 万円</td>
+                  <td>{row.point} pt</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
