@@ -1,0 +1,45 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Owner {
+  id    Int     @id @default(autoincrement())
+  name  String
+  Horse Horse[]
+}
+
+model PogCategory {
+  id    Int     @id @default(autoincrement())
+  name  String
+  Horse Horse[]
+}
+
+model Horse {
+  id            Int         @id @default(autoincrement())
+  owner         Owner       @relation(fields: [ownerId], references: [id])
+  ownerId       Int
+  pogCategory   PogCategory @relation(fields: [pogCategoryId], references: [id])
+  pogCategoryId Int
+  race          Race[]
+}
+
+model Race {
+  id      Int    @id @default(autoincrement())
+  race    String
+  odds    Float
+  point   Int
+  result  Int
+  Horse   Horse  @relation(fields: [horseId], references: [id])
+  horseId Int
+}

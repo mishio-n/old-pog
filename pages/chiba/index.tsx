@@ -15,7 +15,7 @@ type PogRecord = {
 export const getStaticProps: GetStaticProps<{
   pogData: PogRecord[];
 }> = async () => {
-  const dataPath = path.join(process.cwd(), "data", "chiba-sale.csv");
+  const dataPath = path.join(process.cwd(), "data/2022-2023/chiba-sale.csv");
   const reader = asyncReader(dataPath, {
     owner: 0,
     horse: 1,
