@@ -25,13 +25,29 @@ model PogCategory {
   Horse Horse[]
 }
 
+enum GenderCategory {
+  MALE
+  FEMALE
+}
+
+enum Region {
+  MIHO
+  RITTO
+  NRA
+}
+
 model Horse {
-  id            Int         @id @default(autoincrement())
-  owner         Owner       @relation(fields: [ownerId], references: [id])
-  ownerId       Int
-  pogCategory   PogCategory @relation(fields: [pogCategoryId], references: [id])
-  pogCategoryId Int
-  race          Race[]
+  id             Int            @id @default(autoincrement())
+  name           String
+  owner          Owner          @relation(fields: [ownerId], references: [id])
+  ownerId        Int
+  pogCategory    PogCategory    @relation(fields: [pogCategoryId], references: [id])
+  pogCategoryId  Int
+  race           Race[]
+  url            String
+  genderCategory GenderCategory
+  stable         String
+  region         Region
 }
 
 model Race {
