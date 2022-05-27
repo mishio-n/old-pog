@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import path from "path";
 import { useEffect, useState } from "react";
-import { asyncReader } from "../../lib/async-reader";
+import { asyncReader } from "../../../lib/async-reader";
 
 type PogRecord = {
   owner: string;
@@ -97,6 +97,11 @@ const ChibaIndex: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
             <li>
               <Link href={"/"}>
                 <a>TOP</a>
+              </Link>
+            </li>
+            <li>
+              <Link href={"/2022-2023"}>
+                <a>2022-2023</a>
               </Link>
             </li>
             <li>千葉サラブレッドセール2022</li>

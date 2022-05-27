@@ -13,13 +13,11 @@ const Home: NextPage = () => {
 
       <main>
         <div className="p-5">
-          <Link href={"/chiba"}>
+          <Link href={"/2022-2023"}>
             <div className="card max-w-sm bg-base-100 shadow-xl">
               <div className="card-body items-center flex-row pl-5">
                 <div className="border-lime-500 border-l-2 border-solid h-10" />
-                <h2 className="card-title whitespace-nowrap">
-                  千葉サラブレッドセール2022
-                </h2>
+                <h2 className="card-title whitespace-nowrap">2022-2023</h2>
               </div>
             </div>
           </Link>
