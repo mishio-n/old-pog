@@ -48,6 +48,7 @@ model Horse {
   genderCategory GenderCategory
   stable         String
   region         Region
+  enable         Boolean
 }
 
 model Race {

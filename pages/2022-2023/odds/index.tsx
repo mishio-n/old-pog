@@ -1,9 +1,5 @@
-import { Owner } from ".prisma/client";
-import {
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-  NextPage,
-} from "next";
+import { type Owner } from ".prisma/client";
+import { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { prisma } from "../../../lib/prisma";
@@ -12,9 +8,7 @@ type Props = {
   owners: Owner[];
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
   const owners = await prisma.owner.findMany();
   return {
     props: {
@@ -24,7 +18,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 };
 
 const Odds2022_2023: NextPage<
-  InferGetServerSidePropsType<typeof getServerSideProps>
+  InferGetStaticPropsType<typeof getStaticProps>
 > = ({ owners }) => {
   return (
     <>
@@ -63,6 +57,13 @@ const Odds2022_2023: NextPage<
               />
               <span className="label-text ml-2 text-sm">{owner.name}</span>
             </label>
+          ))}
+        </div>
+        <div className="artboard p-5">
+          {owners.map((owner) => (
+            <div className="flex" key={owner.id}>
+              <span>{owner.name}</span>
+            </div>
           ))}
         </div>
       </div>
