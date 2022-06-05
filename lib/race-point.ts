@@ -8,13 +8,15 @@ export type RacePoint = {
 
 export const aggregateRacePoint = (races: Race[]): RacePoint => {
   const averageOdds =
-    races.reduce((result, race) => result + race.odds, 0) / races.length;
+    races.length === 0
+      ? 0
+      : races.reduce((result, race) => result + race.odds, 0) / races.length;
   return races.reduce(
     (result, race) => ({
       totalBasePoint: result.totalBasePoint + race.point,
-      totalPoint: result.totalBasePoint + race.point * race.odds,
+      totalPoint: result.totalBasePoint + Math.round(race.point * race.odds),
       averageOdds,
     }),
-    {} as RacePoint
+    { totalBasePoint: 0, totalPoint: 0, averageOdds } as RacePoint
   );
 };

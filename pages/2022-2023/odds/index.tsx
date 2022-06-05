@@ -2,24 +2,40 @@ import { type Owner } from ".prisma/client";
 import { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { groupBy } from "../../../lib/group-by";
 import { prisma } from "../../../lib/prisma";
+import { aggregateRacePoint } from "../../../lib/race-point";
 
 type Props = {
-  owners: Owner[];
+  ownerWithPoints: (Owner & { totalPoint: number })[];
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const owners = await prisma.owner.findMany();
+  const horses = await prisma.horse.findMany({ include: { race: true } });
+  const horsesByOwner = groupBy(horses, (h) => h.ownerId);
+  const ownerWithPoints = owners.map(({ id, name }) => ({
+    id,
+    name,
+    totalPoint: horsesByOwner[id].reduce(
+      (result, horse) => result + aggregateRacePoint(horse.race).totalPoint,
+      0
+    ),
+  }));
+
+  // ポイント順にして返却する
+  ownerWithPoints.sort((a, b) => b.totalPoint - a.totalPoint);
+
   return {
     props: {
-      owners,
+      ownerWithPoints,
     },
   };
 };
 
 const Odds2022_2023: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
-> = ({ owners }) => {
+> = ({ ownerWithPoints }) => {
   return (
     <>
       <Head>
@@ -39,30 +55,18 @@ const Odds2022_2023: NextPage<
                 <a>2022-2023</a>
               </Link>
             </li>
-            <li>
-              <a>オッズ傾斜POG</a>
-            </li>
+            <li>オッズ傾斜POG</li>
           </ul>
         </div>
-        <div className="flex-row flex mt-4 justify-start">
-          {owners.map((owner) => (
-            <label
-              className="label cursor-pointer"
-              key={`checkbox-${owner.name}`}
-            >
-              <input
-                type="checkbox"
-                className="checkbox checkbox-sm"
-                defaultChecked={true}
-              />
-              <span className="label-text ml-2 text-sm">{owner.name}</span>
-            </label>
-          ))}
-        </div>
         <div className="artboard p-5">
-          {owners.map((owner) => (
+          {ownerWithPoints.map((owner) => (
             <div className="flex" key={owner.id}>
-              <span>{owner.name}</span>
+              <Link href={`/2022-2023/odds/${owner.id}`}>
+                <a>
+                  <span>{owner.name}</span>
+                  <span>{owner.totalPoint}</span>
+                </a>
+              </Link>
             </div>
           ))}
         </div>
