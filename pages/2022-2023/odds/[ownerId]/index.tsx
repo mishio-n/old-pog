@@ -88,13 +88,13 @@ const Odds2022_2023: NextPage<
     const debuted = horsesWithRacePoint.filter(
       (horse) => horse.race.length !== 0
     );
-    return (
-      Math.round(
-        (debuted.reduce((result, curr) => result + curr.averageOdds, 0) /
-          debuted.length) *
-          10
-      ) / 10
-    );
+    return debuted.length === 0
+      ? "-"
+      : Math.round(
+          (debuted.reduce((result, curr) => result + curr.averageOdds, 0) /
+            debuted.length) *
+            10
+        ) / 10;
   }, []);
 
   return (
