@@ -81,7 +81,7 @@ const Odds2022_2023: NextPage<
             <li>オッズ傾斜POG</li>
           </ul>
         </div>
-        <div className="artboard p-5">
+        <div className="artboard px-2">
           {ownerWithPoints.map((owner, index) => (
             <Link href={`/2022-2023/odds/${owner.id}`} key={owner.id}>
               <div

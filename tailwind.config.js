@@ -6,5 +6,15 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [require("daisyui")],
+  plugins: [
+    require("daisyui"),
+    function ({ addUtilities }) {
+      const newUtilities = {
+        ".text-shadow": {
+          textShadow: "0 0 0 #666",
+        },
+      };
+      addUtilities(newUtilities);
+    },
+  ],
 };
