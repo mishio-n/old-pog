@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import path from "path";
 import { useEffect, useState } from "react";
-import { asyncReader } from "../../../lib/async-reader";
+import { asyncReader } from "~/lib/async-reader";
 
 type PogRecord = {
   owner: string;

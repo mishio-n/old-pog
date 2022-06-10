@@ -7,20 +7,24 @@ import {
 } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { prisma } from "~/lib/prisma";
 import { aggregateRacePoint } from "~/lib/race-point";
 
 type Props = {
   owner: Owner;
-  horsesWithRacePoint: (Horse & { race: Race[] } & ReturnType<
+  horseWithRacePoint: Horse & { race: Race[] } & ReturnType<
       typeof aggregateRacePoint
-    >)[];
+    >;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const owners = await prisma.owner.findMany();
-  const paths = owners.map((owner) => `/2022-2023/odds/${owner.id}`);
+  const owners = await prisma.owner.findMany({ include: { Horse: true } });
+  const paths = owners
+    .map((owner) =>
+      owner.Horse.map((horse) => `/2022-2023/odds/${owner.id}/${horse.id}`)
+    )
+    .flat();
 
   return {
     paths,
@@ -33,6 +37,10 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   if (ownerId === undefined || typeof ownerId !== "string") {
     throw new Error("Bad request");
   }
+  const horseId = params?.horseId;
+  if (horseId === undefined || typeof horseId !== "string") {
+    throw new Error("Bad request");
+  }
 
   const owner = await prisma.owner.findUnique({
     where: { id: +ownerId },
@@ -42,61 +50,65 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     throw new Error("Not found");
   }
 
-  const horses = await prisma.horse.findMany({
-    where: { ownerId: owner.id },
+  const horse = await prisma.horse.findUnique({
+    where: { id: +horseId },
     include: { race: true },
   });
 
-  const horsesWithRacePoint = horses.map((horse) => ({
+  if (horse === null) {
+    throw new Error("Not found");
+  }
+
+  const horseWithRacePoint = {
     ...horse,
     ...aggregateRacePoint(horse.race),
-  }));
+  };
 
   return {
     props: {
       owner,
-      horsesWithRacePoint,
+      horseWithRacePoint,
     },
   };
 };
 
-const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
+const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   owner,
-  horsesWithRacePoint,
+  horseWithRacePoint,
 }) => {
   const [isShowTotalPoint, setShowTotoalPoint] = useState(true);
 
-  const sumPoint = useCallback(
-    () =>
-      horsesWithRacePoint.reduce(
-        (result, curr) =>
-          result + (isShowTotalPoint ? curr.totalPoint : curr.totalBasePoint),
-        0
-      ),
-    [isShowTotalPoint]
-  );
+  // const sumPoint = useCallback(
+  //   () =>
+  //     horsesWithRacePoint.reduce(
+  //       (result, curr) =>
+  //         result + (isShowTotalPoint ? curr.totalPoint : curr.totalBasePoint),
+  //       0
+  //     ),
+  //   [isShowTotalPoint]
+  // );
 
-  const sumRaceResult = useCallback(() => {
-    const races = horsesWithRacePoint.map((horse) => horse.race).flat();
-    const firstResults = races.filter((race) => race.result === 1);
-    return {
-      first: firstResults.length,
-      total: races.length,
-    };
-  }, []);
+  // const sumRaceResult = useCallback(() => {
+  //   const races = horsesWithRacePoint.map((horse) => horse.race).flat();
+  //   const firstResults = races.filter((race) => race.result === 1);
+  //   return {
+  //     first: firstResults.length,
+  //     total: races.length,
+  //   };
+  // }, []);
 
-  const ageraveOdds = useCallback(() => {
-    const debuted = horsesWithRacePoint.filter(
-      (horse) => horse.race.length !== 0
-    );
-    return debuted.length === 0
-      ? "-"
-      : Math.round(
-          (debuted.reduce((result, curr) => result + curr.averageOdds, 0) /
-            debuted.length) *
-            10
-        ) / 10;
-  }, []);
+  // const ageraveOdds = useCallback(() => {
+  //   const debuted = horsesWithRacePoint.filter(
+  //     (horse) => horse.race.length !== 0
+  //   );
+  //   return debuted.length === 0
+  //     ? "-"
+  //     : Math.round(
+  //         (debuted.reduce((result, curr) => result + curr.averageOdds, 0) /
+  //           debuted.length) *
+  //           10
+  //       ) / 10;
+  // }, []);
 
   return (
     <>
@@ -122,7 +134,17 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 <a>オッズ傾斜POG</a>
               </Link>
             </li>
-            <li>{owner.name}</li>
+            <li>
+              <Link href={"/2022-2023/odds"}>
+                <a>オッズ傾斜POG</a>
+              </Link>
+            </li>
+            <li>
+              <Link href={`/2022-2023/odds/${owner.id}`}>
+                <a>{owner.name}</a>
+              </Link>
+            </li>
+            <li>{horseWithRacePoint.name}</li>
           </ul>
         </div>
 
@@ -147,25 +169,23 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           <div className="flex justify-between mt-2 w-[240px] items-center">
             <span className="font-semibold">合計　　　：</span>
             <div className="ml-2 flex items-center">
-              <span className="font-mono text-xl">{sumPoint()}</span>
+              <span className="font-mono text-xl">{0}</span>
               <span className="ml-2">ポイント</span>
             </div>
           </div>
           <div className="flex justify-between mt-2 w-[240px] items-center">
             <span className="font-semibold">平均オッズ：</span>
             <div className="ml-2 flex items-center">
-              <span className="font-mono text-xl">{ageraveOdds()}</span>
+              <span className="font-mono text-xl">{0}</span>
               <span className="ml-2">倍</span>
             </div>
           </div>
           <div className="flex justify-between mt-2 w-[240px] items-center">
             <span className="font-semibold">戦績　　　：</span>
             <div className="ml-2 flex items-center">
-              <span className="font-mono text-xl">{sumRaceResult().total}</span>
+              <span className="font-mono text-xl">{0}</span>
               <span className="ml-2">戦</span>
-              <span className="font-mono text-xl ml-2">
-                {sumRaceResult().first}
-              </span>
+              <span className="font-mono text-xl ml-2">{0}</span>
               <span className="ml-2">勝</span>
             </div>
           </div>
@@ -177,33 +197,9 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           </span>
           <span className="ml-2 text-lg font-semibold">指名馬</span>
         </div>
-        <div className="artboard px-2 py-2">
-          {horsesWithRacePoint.map((horse) => (
-            <div
-              className="flex justify-between items-center p-1"
-              key={horse.id}
-            >
-              <span
-                className={`${
-                  horse.genderCategory === "MALE"
-                    ? "text-primary"
-                    : "text-secondary"
-                }`}
-              >
-                {horse.name}
-              </span>
-              <div>
-                <span className="font-mono">
-                  {isShowTotalPoint ? horse.totalPoint : horse.totalBasePoint}
-                </span>
-                <span className="ml-2">pt</span>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </>
   );
 };
 
-export default OwnerIdPage;
+export default HorseIdPage;

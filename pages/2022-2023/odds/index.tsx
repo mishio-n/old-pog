@@ -1,13 +1,13 @@
 import { type Owner } from ".prisma/client";
+import { gsap } from "gsap";
 import { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { createRef, useEffect, useRef } from "react";
-import { groupBy } from "../../../lib/group-by";
-import { prisma } from "../../../lib/prisma";
-import { aggregateRacePoint } from "../../../lib/race-point";
-import { range } from "../../../lib/range";
-import { gsap, Power3 } from "gsap";
+import { groupBy } from "~/lib/group-by";
+import { prisma } from "~/lib/prisma";
+import { aggregateRacePoint } from "~/lib/race-point";
+import { range } from "~/lib/range";
 
 type Props = {
   ownerWithPoints: (Owner & { totalPoint: number })[];
