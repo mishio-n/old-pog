@@ -15,7 +15,10 @@ type Props = {
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const owners = await prisma.owner.findMany();
-  const horses = await prisma.horse.findMany({ include: { race: true } });
+  const horses = await prisma.horse.findMany({
+    include: { race: true },
+    where: { pogCategory: { name: "2022-2023_normal" } },
+  });
   const horsesByOwner = groupBy(horses, (h) => h.ownerId);
   const ownerWithPoints = owners.map(({ id, name }) => ({
     id,
@@ -55,7 +58,11 @@ const Odds2022_2023: NextPage<
         // ポイントに応じてアニメーション時間を変化させる
         duration: 3.6 - (firstPoint - point) / 3.6 / 100,
         onUpdate: () => {
-          pointRef.current!.textContent = Math.floor(obj.count).toString();
+          // アニメーション中の画面遷移を考慮
+          if (pointRef.current === null) {
+            return;
+          }
+          pointRef.current.textContent = Math.floor(obj.count).toString();
         },
       });
     });

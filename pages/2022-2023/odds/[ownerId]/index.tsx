@@ -43,7 +43,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   }
 
   const horses = await prisma.horse.findMany({
-    where: { ownerId: owner.id },
+    where: { ownerId: owner.id, pogCategory: { name: "2022-2023_normal" } },
     include: { race: true },
   });
 
@@ -126,12 +126,12 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           </ul>
         </div>
 
-        <div className="form-control px-2">
+        <div className="form-control px-2 items-start">
           <label className="label cursor-pointer">
             <span className="label-text text-sm">オッズ計算後を表示する</span>
             <input
               type="checkbox"
-              className="toggle toggle-accent"
+              className="toggle toggle-accent ml-2"
               checked={isShowTotalPoint}
               onChange={(e) => setShowTotoalPoint(e.target.checked)}
             />
@@ -144,21 +144,21 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           <span className="ml-2 text-lg font-semibold">成績</span>
         </div>
         <div className="flex flex-col mx-2 p-1 ">
-          <div className="flex justify-between mt-2 w-[240px] items-center">
+          <div className="flex justify-between mt-2 w-[280px] items-center">
             <span className="font-semibold">合計　　　：</span>
             <div className="ml-2 flex items-center">
               <span className="font-mono text-xl">{sumPoint()}</span>
               <span className="ml-2">ポイント</span>
             </div>
           </div>
-          <div className="flex justify-between mt-2 w-[240px] items-center">
+          <div className="flex justify-between mt-2 w-[280px] items-center">
             <span className="font-semibold">平均オッズ：</span>
             <div className="ml-2 flex items-center">
               <span className="font-mono text-xl">{ageraveOdds()}</span>
               <span className="ml-2">倍</span>
             </div>
           </div>
-          <div className="flex justify-between mt-2 w-[240px] items-center">
+          <div className="flex justify-between mt-2 w-[280px] items-center">
             <span className="font-semibold">戦績　　　：</span>
             <div className="ml-2 flex items-center">
               <span className="font-mono text-xl">{sumRaceResult().total}</span>
@@ -179,26 +179,32 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         </div>
         <div className="artboard px-2 py-2">
           {horsesWithRacePoint.map((horse) => (
-            <div
-              className="flex justify-between items-center p-1"
+            <Link
+              href={`/2022-2023/odds/${owner.id}/${horse.id}`}
               key={horse.id}
             >
-              <span
-                className={`${
-                  horse.genderCategory === "MALE"
-                    ? "text-primary"
-                    : "text-secondary"
-                }`}
-              >
-                {horse.name}
-              </span>
-              <div>
-                <span className="font-mono">
-                  {isShowTotalPoint ? horse.totalPoint : horse.totalBasePoint}
-                </span>
-                <span className="ml-2">pt</span>
-              </div>
-            </div>
+              <a>
+                <div className="flex justify-between items-center p-1">
+                  <span
+                    className={`${
+                      horse.genderCategory === "MALE"
+                        ? "text-primary"
+                        : "text-secondary"
+                    }`}
+                  >
+                    {horse.name}
+                  </span>
+                  <div>
+                    <span className="font-mono">
+                      {isShowTotalPoint
+                        ? horse.totalPoint
+                        : horse.totalBasePoint}
+                    </span>
+                    <span className="ml-2">pt</span>
+                  </div>
+                </div>
+              </a>
+            </Link>
           ))}
         </div>
       </div>

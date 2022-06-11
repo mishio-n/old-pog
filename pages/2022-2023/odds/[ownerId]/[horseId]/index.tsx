@@ -7,7 +7,9 @@ import {
 } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback } from "react";
+import { RaceItem } from "~/components/RaceItem";
+import { Stable } from "~/components/Stable";
 import { prisma } from "~/lib/prisma";
 import { aggregateRacePoint } from "~/lib/race-point";
 
@@ -19,10 +21,15 @@ type Props = {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const owners = await prisma.owner.findMany({ include: { Horse: true } });
+  const owners = await prisma.owner.findMany();
+  const horses = await prisma.horse.findMany({
+    where: { pogCategory: { name: "2022-2023_normal" } },
+  });
   const paths = owners
     .map((owner) =>
-      owner.Horse.map((horse) => `/2022-2023/odds/${owner.id}/${horse.id}`)
+      horses
+        .filter(({ ownerId }) => ownerId === owner.id)
+        .map((horse) => `/2022-2023/odds/${owner.id}/${horse.id}`)
     )
     .flat();
 
@@ -76,39 +83,31 @@ const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   owner,
   horseWithRacePoint,
 }) => {
-  const [isShowTotalPoint, setShowTotoalPoint] = useState(true);
-
-  // const sumPoint = useCallback(
-  //   () =>
-  //     horsesWithRacePoint.reduce(
-  //       (result, curr) =>
-  //         result + (isShowTotalPoint ? curr.totalPoint : curr.totalBasePoint),
-  //       0
-  //     ),
-  //   [isShowTotalPoint]
-  // );
-
-  // const sumRaceResult = useCallback(() => {
-  //   const races = horsesWithRacePoint.map((horse) => horse.race).flat();
-  //   const firstResults = races.filter((race) => race.result === 1);
-  //   return {
-  //     first: firstResults.length,
-  //     total: races.length,
-  //   };
-  // }, []);
-
-  // const ageraveOdds = useCallback(() => {
-  //   const debuted = horsesWithRacePoint.filter(
-  //     (horse) => horse.race.length !== 0
-  //   );
-  //   return debuted.length === 0
-  //     ? "-"
-  //     : Math.round(
-  //         (debuted.reduce((result, curr) => result + curr.averageOdds, 0) /
-  //           debuted.length) *
-  //           10
-  //       ) / 10;
-  // }, []);
+  // x-x-x-x形式で結果を集計
+  const aggregateRaceResult = useCallback(
+    () =>
+      horseWithRacePoint.race.reduce(
+        (result, curr) => {
+          switch (curr.result) {
+            case 1:
+              result[0]++;
+              break;
+            case 2:
+              result[2]++;
+              break;
+            case 3:
+              result[3]++;
+              break;
+            default:
+              result[3]++;
+              break;
+          }
+          return result;
+        },
+        [0, 0, 0, 0]
+      ),
+    []
+  );
 
   return (
     <>
@@ -135,11 +134,6 @@ const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
               </Link>
             </li>
             <li>
-              <Link href={"/2022-2023/odds"}>
-                <a>オッズ傾斜POG</a>
-              </Link>
-            </li>
-            <li>
               <Link href={`/2022-2023/odds/${owner.id}`}>
                 <a>{owner.name}</a>
               </Link>
@@ -148,54 +142,97 @@ const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           </ul>
         </div>
 
-        <div className="form-control px-2">
-          <label className="label cursor-pointer">
-            <span className="label-text text-sm">オッズ計算後を表示する</span>
-            <input
-              type="checkbox"
-              className="toggle toggle-accent"
-              checked={isShowTotalPoint}
-              onChange={(e) => setShowTotoalPoint(e.target.checked)}
+        <div className="mt-4 flex items-center justify-start">
+          <h1
+            className={`font-bold text-2xl ${
+              horseWithRacePoint.genderCategory === "MALE"
+                ? "text-primary"
+                : "text-secondary"
+            }`}
+          >
+            <a href={horseWithRacePoint.url} target="_blank" rel="noreferrer">
+              {horseWithRacePoint.name}
+            </a>
+          </h1>
+          <div className="ml-4">
+            <Stable
+              region={horseWithRacePoint.region}
+              name={horseWithRacePoint.stable}
             />
-          </label>
+          </div>
         </div>
-        <div className="border-b-2 border-accent border-dotted mx-2 flex items-center mt-2">
+
+        <div className="border-b-2 border-accent border-dotted mx-2 flex items-center mt-4">
           <span className="text-transparent text-shadow text-xl">
             &#128178;
           </span>
           <span className="ml-2 text-lg font-semibold">成績</span>
         </div>
         <div className="flex flex-col mx-2 p-1 ">
-          <div className="flex justify-between mt-2 w-[240px] items-center">
+          <div className="flex justify-between mt-2 w-[280px] items-center">
             <span className="font-semibold">合計　　　：</span>
             <div className="ml-2 flex items-center">
-              <span className="font-mono text-xl">{0}</span>
+              <span className="font-mono text-xl">
+                {horseWithRacePoint.totalPoint}
+              </span>
               <span className="ml-2">ポイント</span>
             </div>
           </div>
-          <div className="flex justify-between mt-2 w-[240px] items-center">
+          <div className="flex justify-between mt-2 w-[280px] items-center">
+            <span className="font-semibold">基礎合計　：</span>
+            <div className="ml-2 flex items-center">
+              <span className="font-mono text-xl">
+                {horseWithRacePoint.totalBasePoint}
+              </span>
+              <span className="ml-2">ポイント</span>
+            </div>
+          </div>
+          <div className="flex justify-between mt-2 w-[280px] items-center">
             <span className="font-semibold">平均オッズ：</span>
             <div className="ml-2 flex items-center">
-              <span className="font-mono text-xl">{0}</span>
+              <span className="font-mono text-xl">
+                {horseWithRacePoint.averageOdds !== 0
+                  ? horseWithRacePoint.averageOdds
+                  : "-"}
+              </span>
               <span className="ml-2">倍</span>
             </div>
           </div>
-          <div className="flex justify-between mt-2 w-[240px] items-center">
+          <div className="flex justify-between mt-2 w-[280px] items-center">
             <span className="font-semibold">戦績　　　：</span>
             <div className="ml-2 flex items-center">
-              <span className="font-mono text-xl">{0}</span>
-              <span className="ml-2">戦</span>
-              <span className="font-mono text-xl ml-2">{0}</span>
-              <span className="ml-2">勝</span>
+              <span className="font-mono text-xl">
+                {aggregateRaceResult()[0]}
+              </span>
+              <span className="ml-2">-</span>
+              <span className="font-mono text-xl ml-2">
+                {aggregateRaceResult()[1]}
+              </span>
+              <span className="ml-2">-</span>
+              <span className="font-mono text-xl ml-2">
+                {aggregateRaceResult()[2]}
+              </span>
+              <span className="ml-2">-</span>
+              <span className="font-mono text-xl ml-2">
+                {aggregateRaceResult()[3]}
+              </span>
             </div>
           </div>
         </div>
 
         <div className="border-b-2 border-accent border-dotted mx-2 flex items-center mt-4">
           <span className="text-transparent text-shadow text-xl">
-            &#128014;
+            &#127942;
           </span>
-          <span className="ml-2 text-lg font-semibold">指名馬</span>
+          <span className="ml-2 text-lg font-semibold">レース</span>
+        </div>
+        <div className="mt-4 mx-2 p-1 w-[300px]">
+          {horseWithRacePoint.race.reverse().map((race, index) => (
+            <div key={race.id}>
+              {index !== 0 && <div className="divider mt-1 mb-1" />}
+              <RaceItem {...race} />
+            </div>
+          ))}
         </div>
       </div>
     </>
