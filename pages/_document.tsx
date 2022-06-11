@@ -11,7 +11,10 @@ export default function Document() {
         <meta name="icon" content="/favicon.ico" />
         <meta property="og:title" content={"おうちPOG"} />
         <meta property="og:description" content={"POG集計サイト"} />
-        <meta property="og:image" content={"/favicon.ico"} />
+        <meta
+          property="og:image"
+          content={"https://ouchi-pog.vercel.app/icon-256x256.png"}
+        />
       </Head>
       <body className="bg-slate-50" style={{ minHeight: "100vh" }}>
         <Header />
