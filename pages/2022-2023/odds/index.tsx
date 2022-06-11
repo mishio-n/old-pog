@@ -45,13 +45,15 @@ const Odds2022_2023: NextPage<
 
   // カウントアップアニメーション
   useEffect(() => {
+    const firstPoint = +pointRefs.current[0].current?.dataset.point!;
     pointRefs.current.forEach((pointRef) => {
-      const point = pointRef.current?.dataset.point!;
+      const point = +pointRef.current?.dataset.point!;
       let obj = { count: 0 };
       gsap.to(obj, {
         count: point,
         ease: "power3.inOut",
-        duration: 3.6,
+        // ポイントに応じてアニメーション時間を変化させる
+        duration: 3.6 - (firstPoint - point) / 3.6 / 100,
         onUpdate: () => {
           pointRef.current!.textContent = Math.floor(obj.count).toString();
         },
