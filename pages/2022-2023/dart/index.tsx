@@ -24,7 +24,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     id,
     name,
     totalPoint: horsesByOwner[id].reduce(
-      (result, horse) => result + aggregateRacePoint(horse.race).totalPoint,
+      (result, horse) => result + aggregateRacePoint(horse.race).totalBasePoint,
       0
     ),
   }));
