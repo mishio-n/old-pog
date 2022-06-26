@@ -23,13 +23,13 @@ type Props = {
 export const getStaticPaths: GetStaticPaths = async () => {
   const owners = await prisma.owner.findMany();
   const horses = await prisma.horse.findMany({
-    where: { pogCategoryId: 1 },
+    where: { pogCategoryId: 2 },
   });
   const paths = owners
     .map((owner) =>
       horses
         .filter(({ ownerId }) => ownerId === owner.id)
-        .map((horse) => `/2022-2023/odds/${owner.id}/${horse.id}`)
+        .map((horse) => `/2022-2023/dart/${owner.id}/${horse.id}`)
     )
     .flat();
 
@@ -115,7 +115,7 @@ const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <title>{owner.name}の成績 | おうちPOG</title>
         <meta name="description" content="POG" />
       </Head>
-      <div className="artboard p-5">
+      <div className="artboard p-5 bg-[#f6d7b030] h-[100vh]">
         <div className="text-sm breadcrumbs">
           <ul>
             <li>
@@ -129,12 +129,12 @@ const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
               </Link>
             </li>
             <li>
-              <Link href={"/2022-2023/odds"}>
-                <a>オッズ傾斜POG</a>
+              <Link href={"/2022-2023/dart"}>
+                <a>ダート馬POG</a>
               </Link>
             </li>
             <li>
-              <Link href={`/2022-2023/odds/${owner.id}`}>
+              <Link href={`/2022-2023/dart/${owner.id}`}>
                 <a>{owner.name}</a>
               </Link>
             </li>
@@ -161,6 +161,11 @@ const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
             />
           </div>
         </div>
+        {!horseWithRacePoint.enable && (
+          <div className="mt-2 ml-2 text-slate-100 rounded-full bg-gray-400 py-1 px-2 font-semibold w-[64px] text-center">
+            <span>失格</span>
+          </div>
+        )}
 
         <div className="border-b-2 border-accent border-dotted mx-2 flex items-center mt-4">
           <span className="text-transparent text-shadow text-xl">

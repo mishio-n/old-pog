@@ -17,7 +17,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const owners = await prisma.owner.findMany();
   const horses = await prisma.horse.findMany({
     include: { race: true },
-    where: { pogCategoryId: 1 },
+    where: { pogCategoryId: 2 },
   });
   const horsesByOwner = groupBy(horses, (h) => h.ownerId);
   const ownerWithPoints = owners.map(({ id, name }) => ({
@@ -39,7 +39,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-const Odds2022_2023: NextPage<
+const Dart2022_2023: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = ({ ownerWithPoints }) => {
   const pointRefs = useRef(
@@ -74,7 +74,7 @@ const Odds2022_2023: NextPage<
         <title>オッズ傾斜POG | おうちPOG</title>
         <meta name="description" content="POG" />
       </Head>
-      <div className="artboard p-5">
+      <div className="artboard p-5 bg-[#f6d7b030] h-[100vh]">
         <div className="text-sm breadcrumbs">
           <ul>
             <li>
@@ -87,12 +87,12 @@ const Odds2022_2023: NextPage<
                 <a>2022-2023</a>
               </Link>
             </li>
-            <li>オッズ傾斜POG</li>
+            <li>ダート馬POG</li>
           </ul>
         </div>
         <div className="artboard px-2">
           {ownerWithPoints.map((owner, index) => (
-            <Link href={`/2022-2023/odds/${owner.id}`} key={owner.id}>
+            <Link href={`/2022-2023/dart/${owner.id}`} key={owner.id}>
               <div
                 className={`max-w-sm py-4 px-1 pb-0 mt-4 flex items-center justify-between ${
                   index === 0
@@ -122,4 +122,4 @@ const Odds2022_2023: NextPage<
   );
 };
 
-export default Odds2022_2023;
+export default Dart2022_2023;

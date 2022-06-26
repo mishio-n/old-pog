@@ -20,7 +20,7 @@ type Props = {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const owners = await prisma.owner.findMany();
-  const paths = owners.map((owner) => `/2022-2023/odds/${owner.id}`);
+  const paths = owners.map((owner) => `/2022-2023/dart/${owner.id}`);
 
   return {
     paths,
@@ -43,7 +43,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   }
 
   const horses = await prisma.horse.findMany({
-    where: { ownerId: owner.id, pogCategoryId: 1 },
+    where: { ownerId: owner.id, pogCategoryId: 2 },
     include: { race: true },
   });
 
@@ -64,7 +64,7 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   owner,
   horsesWithRacePoint,
 }) => {
-  const [isShowTotalPoint, setShowTotoalPoint] = useState(true);
+  const [isShowTotalPoint, setShowTotoalPoint] = useState(false);
 
   const sumPoint = useCallback(
     () =>
@@ -104,7 +104,7 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <title>{owner.name}の成績 | おうちPOG</title>
         <meta name="description" content="POG" />
       </Head>
-      <div className="artboard p-5">
+      <div className="artboard p-5 bg-[#f6d7b030] h-[100vh]">
         <div className="text-sm breadcrumbs">
           <ul>
             <li>
@@ -118,8 +118,8 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
               </Link>
             </li>
             <li>
-              <Link href={"/2022-2023/odds"}>
-                <a>オッズ傾斜POG</a>
+              <Link href={"/2022-2023/dart"}>
+                <a>ダート馬POG</a>
               </Link>
             </li>
             <li>{owner.name}</li>
@@ -180,27 +180,37 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <div className="artboard px-2 py-2">
           {horsesWithRacePoint.map((horse) => (
             <Link
-              href={`/2022-2023/odds/${owner.id}/${horse.id}`}
+              href={`/2022-2023/dart/${owner.id}/${horse.id}`}
               key={horse.id}
             >
               <a>
                 <div className="flex justify-between items-center p-1">
                   <span
                     className={`${
-                      horse.genderCategory === "MALE"
-                        ? "text-primary"
-                        : "text-secondary"
+                      horse.enable
+                        ? horse.genderCategory === "MALE"
+                          ? "text-primary"
+                          : "text-secondary"
+                        : "text-gray-300"
                     }`}
                   >
                     {horse.name}
                   </span>
                   <div>
-                    <span className="font-mono">
+                    <span
+                      className={`font-mono  ${
+                        horse.enable ? "" : "text-gray-400"
+                      }`}
+                    >
                       {isShowTotalPoint
                         ? horse.totalPoint
                         : horse.totalBasePoint}
                     </span>
-                    <span className="ml-2">pt</span>
+                    <span
+                      className={`ml-2 ${horse.enable ? "" : "text-gray-400"}`}
+                    >
+                      pt
+                    </span>
                   </div>
                 </div>
               </a>
