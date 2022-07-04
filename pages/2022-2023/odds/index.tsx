@@ -56,7 +56,7 @@ const Odds2022_2023: NextPage<
         count: point,
         ease: "power3.inOut",
         // ポイントに応じてアニメーション時間を変化させる
-        duration: 3.6 - (firstPoint - point) / 3.6 / 100,
+        duration: 3.6 * (point / firstPoint),
         onUpdate: () => {
           // アニメーション中の画面遷移を考慮
           if (pointRef.current === null) {
