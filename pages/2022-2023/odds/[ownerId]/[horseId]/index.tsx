@@ -93,10 +93,10 @@ const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
               result[0]++;
               break;
             case 2:
-              result[2]++;
+              result[1]++;
               break;
             case 3:
-              result[3]++;
+              result[2]++;
               break;
             default:
               result[3]++;

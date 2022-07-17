@@ -23,10 +23,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const ownerWithPoints = owners.map(({ id, name }) => ({
     id,
     name,
-    totalPoint: horsesByOwner[id].reduce(
-      (result, horse) => result + aggregateRacePoint(horse.race).totalBasePoint,
-      0
-    ),
+    totalPoint: horsesByOwner[id].reduce((result, horse) => {
+      if (!horse.enable) {
+        return result;
+      }
+      return result + aggregateRacePoint(horse.race).totalBasePoint;
+    }, 0),
   }));
 
   // ポイント順にして返却する

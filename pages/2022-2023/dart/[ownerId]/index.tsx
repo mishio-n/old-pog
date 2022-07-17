@@ -68,11 +68,14 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
   const sumPoint = useCallback(
     () =>
-      horsesWithRacePoint.reduce(
-        (result, curr) =>
-          result + (isShowTotalPoint ? curr.totalPoint : curr.totalBasePoint),
-        0
-      ),
+      horsesWithRacePoint.reduce((result, curr) => {
+        if (!curr.enable) {
+          return result;
+        }
+        return (
+          result + (isShowTotalPoint ? curr.totalPoint : curr.totalBasePoint)
+        );
+      }, 0),
     [isShowTotalPoint]
   );
 
