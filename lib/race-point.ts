@@ -10,7 +10,11 @@ export const aggregateRacePoint = (races: Race[]): RacePoint => {
   const averageOdds =
     races.length === 0
       ? 0
-      : races.reduce((result, race) => result + race.odds, 0) / races.length;
+      : Math.round(
+          (races.reduce((result, race) => result + race.odds, 0) /
+            races.length) *
+            10
+        ) / 10;
   return races.reduce(
     (result, race) => ({
       totalBasePoint: result.totalBasePoint + race.point,
