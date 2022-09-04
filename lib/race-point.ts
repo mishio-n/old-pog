@@ -18,7 +18,7 @@ export const aggregateRacePoint = (races: Race[]): RacePoint => {
   return races.reduce(
     (result, race) => ({
       totalBasePoint: result.totalBasePoint + race.point,
-      totalPoint: result.totalBasePoint + Math.round(race.point * race.odds),
+      totalPoint: result.totalPoint + Math.round(race.point * race.odds),
       averageOdds,
     }),
     { totalBasePoint: 0, totalPoint: 0, averageOdds } as RacePoint
