@@ -59,7 +59,8 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   const horse = await prisma.horse.findUnique({
     where: { id: +horseId },
-    include: { race: true },
+    // 表示用に最新の結果から並べておく
+    include: { race: { orderBy: { id: "desc" } } },
   });
 
   if (horse === null) {
@@ -227,7 +228,7 @@ const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           <span className="ml-2 text-lg font-semibold">レース</span>
         </div>
         <div className="mt-4 mx-2 p-1 w-[300px]">
-          {horseWithRacePoint.race.reverse().map((race, index) => (
+          {horseWithRacePoint.race.map((race, index) => (
             <div key={race.id}>
               {index !== 0 && <div className="divider mt-1 mb-1" />}
               <RaceItem {...race} />
