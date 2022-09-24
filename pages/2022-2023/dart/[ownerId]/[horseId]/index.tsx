@@ -7,7 +7,6 @@ import {
 } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useCallback } from "react";
 import { RaceItem } from "~/components/RaceItem";
 import { Stable } from "~/components/Stable";
 import { prisma } from "~/lib/prisma";
@@ -18,6 +17,12 @@ type Props = {
   horseWithRacePoint: Horse & { race: Race[] } & ReturnType<
       typeof aggregateRacePoint
     >;
+  raceResults: {
+    first: number;
+    second: number;
+    third: number;
+    other: number;
+  };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -71,10 +76,33 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     ...aggregateRacePoint(horse.race),
   };
 
+  // x-x-x-x形式で結果を集計
+  const raceResults: Props["raceResults"] = horseWithRacePoint.race.reduce(
+    (result, cuur) => {
+      switch (cuur.result) {
+        case 1:
+          result.first++;
+          break;
+        case 2:
+          result.second++;
+          break;
+        case 3:
+          result.third++;
+          break;
+        default:
+          result.other++;
+          break;
+      }
+      return result;
+    },
+    { first: 0, second: 0, third: 0, other: 0 }
+  );
+
   return {
     props: {
       owner,
       horseWithRacePoint,
+      raceResults,
     },
   };
 };
@@ -82,33 +110,8 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   owner,
   horseWithRacePoint,
+  raceResults,
 }) => {
-  // x-x-x-x形式で結果を集計
-  const aggregateRaceResult = useCallback(
-    () =>
-      horseWithRacePoint.race.reduce(
-        (result, curr) => {
-          switch (curr.result) {
-            case 1:
-              result[0]++;
-              break;
-            case 2:
-              result[1]++;
-              break;
-            case 3:
-              result[2]++;
-              break;
-            default:
-              result[3]++;
-              break;
-          }
-          return result;
-        },
-        [0, 0, 0, 0]
-      ),
-    []
-  );
-
   return (
     <>
       <Head>
@@ -206,20 +209,18 @@ const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           <div className="flex justify-between mt-2 w-[280px] items-center">
             <span className="font-semibold">戦績　　　：</span>
             <div className="ml-2 flex items-center">
-              <span className="font-mono text-xl">
-                {aggregateRaceResult()[0]}
+              <span className="font-mono text-xl">{raceResults.first}</span>
+              <span className="ml-2">-</span>
+              <span className="font-mono text-xl ml-2">
+                {raceResults.second}
               </span>
               <span className="ml-2">-</span>
               <span className="font-mono text-xl ml-2">
-                {aggregateRaceResult()[1]}
+                {raceResults.third}
               </span>
               <span className="ml-2">-</span>
               <span className="font-mono text-xl ml-2">
-                {aggregateRaceResult()[2]}
-              </span>
-              <span className="ml-2">-</span>
-              <span className="font-mono text-xl ml-2">
-                {aggregateRaceResult()[3]}
+                {raceResults.other}
               </span>
             </div>
           </div>
