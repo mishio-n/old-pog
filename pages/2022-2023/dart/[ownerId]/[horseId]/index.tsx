@@ -64,7 +64,8 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   const horse = await prisma.horse.findUnique({
     where: { id: +horseId },
-    include: { race: true },
+    // 表示用に最新の結果から並べておく
+    include: { race: { orderBy: { id: "desc" } } },
   });
 
   if (horse === null) {
