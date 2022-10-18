@@ -3,6 +3,7 @@ import { gsap } from "gsap";
 import { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import Router from "next/router";
 import { createRef, useEffect, useRef } from "react";
 import { groupBy } from "~/lib/group-by";
 import { prisma } from "~/lib/prisma";
@@ -116,6 +117,14 @@ const Odds2022_2023: NextPage<
               </div>
             </Link>
           ))}
+        </div>
+        <div className="mt-12 text-center">
+          <button
+            className="btn btn-info text-slate-50 w-[120px] shadow-md"
+            onClick={() => Router.push("./odds/chart")}
+          >
+            グラフを見る
+          </button>
         </div>
       </div>
     </>
