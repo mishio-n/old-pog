@@ -14,9 +14,9 @@ import { aggregateRacePoint } from "~/lib/race-point";
 
 type Props = {
   owner: Owner;
-  horseWithRacePoint: Horse & { race: Race[] } & ReturnType<
-      typeof aggregateRacePoint
-    >;
+  horseWithRacePoint: Horse & {
+    race: (Omit<Race, "date"> & { date: string })[];
+  } & ReturnType<typeof aggregateRacePoint>;
   raceResults: {
     first: number;
     second: number;
@@ -65,7 +65,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const horse = await prisma.horse.findUnique({
     where: { id: +horseId },
     // 表示用に最新の結果から並べておく
-    include: { race: { orderBy: { id: "desc" } } },
+    include: { race: { orderBy: { date: "desc" } } },
   });
 
   if (horse === null) {
@@ -74,6 +74,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   const horseWithRacePoint = {
     ...horse,
+    race: horse.race.map((r) => ({ ...r, date: r.date.toISOString() })),
     ...aggregateRacePoint(horse.race),
   };
 

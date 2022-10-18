@@ -2,7 +2,7 @@ import { type Race } from "@prisma/client";
 import { useCallback } from "react";
 import styles from "./raceItem.module.css";
 
-type Props = Race;
+type Props = Omit<Race, "date"> & { date: string };
 
 export const RaceItem: React.FC<Props> = (props) => {
   const resultBgColor = useCallback(() => {

@@ -13,9 +13,9 @@ import { aggregateRacePoint } from "~/lib/race-point";
 
 type Props = {
   owner: Owner;
-  horsesWithRacePoint: (Horse & { race: Race[] } & ReturnType<
-      typeof aggregateRacePoint
-    >)[];
+  horsesWithRacePoint: (Horse & {
+    race: (Omit<Race, "date"> & { date: string })[];
+  } & ReturnType<typeof aggregateRacePoint>)[];
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -49,6 +49,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   const horsesWithRacePoint = horses.map((horse) => ({
     ...horse,
+    race: horse.race.map((r) => ({ ...r, date: r.date.toISOString() })),
     ...aggregateRacePoint(horse.race),
   }));
 
