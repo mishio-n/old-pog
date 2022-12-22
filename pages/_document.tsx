@@ -1,5 +1,4 @@
 import { Head, Html, Main, NextScript } from "next/document";
-import { Header } from "~/components/Header";
 
 export default function Document() {
   return (
@@ -17,7 +16,7 @@ export default function Document() {
         />
       </Head>
       <body className="bg-slate-50" style={{ minHeight: "100vh" }}>
-        <Header />
+        <div id="modal" className=""></div>
         <Main />
         <NextScript />
       </body>

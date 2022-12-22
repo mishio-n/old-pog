@@ -117,31 +117,23 @@ const HorseIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   return (
     <>
       <Head>
-        <title>{owner.name}の成績 | おうちPOG</title>
+        <title>{`${horseWithRacePoint.name} | おうちPOG`}</title>
         <meta name="description" content="POG" />
       </Head>
       <div className="artboard p-5">
         <div className="text-sm breadcrumbs">
           <ul>
             <li>
-              <Link href={"/"}>
-                <a>TOP</a>
-              </Link>
+              <Link href={"/"}>TOP</Link>
             </li>
             <li>
-              <Link href={"/2022-2023"}>
-                <a>2022-2023</a>
-              </Link>
+              <Link href={"/2022-2023"}>2022-2023</Link>
             </li>
             <li>
-              <Link href={"/2022-2023/odds"}>
-                <a>オッズ傾斜POG</a>
-              </Link>
+              <Link href={"/2022-2023/odds"}>オッズ傾斜POG</Link>
             </li>
             <li>
-              <Link href={`/2022-2023/odds/${owner.id}`}>
-                <a>{owner.name}</a>
-              </Link>
+              <Link href={`/2022-2023/odds/${owner.id}`}>{owner.name}</Link>
             </li>
             <li>{horseWithRacePoint.name}</li>
           </ul>

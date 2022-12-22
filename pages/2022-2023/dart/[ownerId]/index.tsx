@@ -105,26 +105,20 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   return (
     <>
       <Head>
-        <title>{owner.name}の成績 | おうちPOG</title>
+        <title>{`${owner.name}の成績 | おうちPOG`}</title>
         <meta name="description" content="POG" />
       </Head>
       <div className="artboard p-5 bg-[#f6d7b030] h-[100vh]">
         <div className="text-sm breadcrumbs">
           <ul>
             <li>
-              <Link href={"/"}>
-                <a>TOP</a>
-              </Link>
+              <Link href={"/"}>TOP</Link>
             </li>
             <li>
-              <Link href={"/2022-2023"}>
-                <a>2022-2023</a>
-              </Link>
+              <Link href={"/2022-2023"}>2022-2023</Link>
             </li>
             <li>
-              <Link href={"/2022-2023/dart"}>
-                <a>ダート馬POG</a>
-              </Link>
+              <Link href={"/2022-2023/dart"}>ダート馬POG</Link>
             </li>
             <li>{owner.name}</li>
           </ul>
@@ -187,37 +181,33 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
               href={`/2022-2023/dart/${owner.id}/${horse.id}`}
               key={horse.id}
             >
-              <a>
-                <div className="flex justify-between items-center p-1">
+              <div className="flex justify-between items-center p-1">
+                <span
+                  className={`${
+                    horse.enable
+                      ? horse.genderCategory === "MALE"
+                        ? "text-primary"
+                        : "text-secondary"
+                      : "text-gray-300"
+                  }`}
+                >
+                  {horse.name}
+                </span>
+                <div>
                   <span
-                    className={`${
-                      horse.enable
-                        ? horse.genderCategory === "MALE"
-                          ? "text-primary"
-                          : "text-secondary"
-                        : "text-gray-300"
+                    className={`font-mono  ${
+                      horse.enable ? "" : "text-gray-400"
                     }`}
                   >
-                    {horse.name}
+                    {isShowTotalPoint ? horse.totalPoint : horse.totalBasePoint}
                   </span>
-                  <div>
-                    <span
-                      className={`font-mono  ${
-                        horse.enable ? "" : "text-gray-400"
-                      }`}
-                    >
-                      {isShowTotalPoint
-                        ? horse.totalPoint
-                        : horse.totalBasePoint}
-                    </span>
-                    <span
-                      className={`ml-2 ${horse.enable ? "" : "text-gray-400"}`}
-                    >
-                      pt
-                    </span>
-                  </div>
+                  <span
+                    className={`ml-2 ${horse.enable ? "" : "text-gray-400"}`}
+                  >
+                    pt
+                  </span>
                 </div>
-              </a>
+              </div>
             </Link>
           ))}
         </div>

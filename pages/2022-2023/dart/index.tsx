@@ -80,14 +80,10 @@ const Dart2022_2023: NextPage<
         <div className="text-sm breadcrumbs">
           <ul>
             <li>
-              <Link href={"/"}>
-                <a>TOP</a>
-              </Link>
+              <Link href={"/"}>TOP</Link>
             </li>
             <li>
-              <Link href={"/2022-2023"}>
-                <a>2022-2023</a>
-              </Link>
+              <Link href={"/2022-2023"}>2022-2023</Link>
             </li>
             <li>ダート馬POG</li>
           </ul>

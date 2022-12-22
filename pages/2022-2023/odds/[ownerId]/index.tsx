@@ -102,26 +102,20 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   return (
     <>
       <Head>
-        <title>{owner.name}の成績 | おうちPOG</title>
+        <title>{`${owner.name}の成績 | おうちPOG`}</title>
         <meta name="description" content="POG" />
       </Head>
       <div className="artboard p-5">
         <div className="text-sm breadcrumbs">
           <ul>
             <li>
-              <Link href={"/"}>
-                <a>TOP</a>
-              </Link>
+              <Link href={"/"}>TOP</Link>
             </li>
             <li>
-              <Link href={"/2022-2023"}>
-                <a>2022-2023</a>
-              </Link>
+              <Link href={"/2022-2023"}>2022-2023</Link>
             </li>
             <li>
-              <Link href={"/2022-2023/odds"}>
-                <a>オッズ傾斜POG</a>
-              </Link>
+              <Link href={"/2022-2023/odds"}>オッズ傾斜POG</Link>
             </li>
             <li>{owner.name}</li>
           </ul>
@@ -184,27 +178,23 @@ const OwnerIdPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
               href={`/2022-2023/odds/${owner.id}/${horse.id}`}
               key={horse.id}
             >
-              <a>
-                <div className="flex justify-between items-center p-1">
-                  <span
-                    className={`${
-                      horse.genderCategory === "MALE"
-                        ? "text-primary"
-                        : "text-secondary"
-                    }`}
-                  >
-                    {horse.name}
+              <div className="flex justify-between items-center p-1">
+                <span
+                  className={`${
+                    horse.genderCategory === "MALE"
+                      ? "text-primary"
+                      : "text-secondary"
+                  }`}
+                >
+                  {horse.name}
+                </span>
+                <div>
+                  <span className="font-mono">
+                    {isShowTotalPoint ? horse.totalPoint : horse.totalBasePoint}
                   </span>
-                  <div>
-                    <span className="font-mono">
-                      {isShowTotalPoint
-                        ? horse.totalPoint
-                        : horse.totalBasePoint}
-                    </span>
-                    <span className="ml-2">pt</span>
-                  </div>
+                  <span className="ml-2">pt</span>
                 </div>
-              </a>
+              </div>
             </Link>
           ))}
         </div>
