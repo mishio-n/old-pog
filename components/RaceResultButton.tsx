@@ -4,7 +4,7 @@ import { RaceForm } from "./RaceForm";
 const RaceResultButton: React.FC = () => {
   const [open, setOpen] = useState(false);
   // 馬詳細ページ以外ではボタンを表示させない
-  if (window.location.pathname.split("/").length !== 4) {
+  if (window.location.pathname.split("/").length !== 5) {
     return null;
   }
 
