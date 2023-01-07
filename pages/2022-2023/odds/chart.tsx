@@ -53,35 +53,35 @@ const AGGREGATE_SPAN = {
     end: new Date("2022-12-31"),
   },
 
-  // "2023/01": {
-  //   start: new Date("2023-01-01"),
-  //   end: new Date("2023-01-31"),
-  // },
+  "2023/01": {
+    start: new Date("2023-01-01"),
+    end: new Date("2023-01-31"),
+  },
 
-  // "2023/02": {
-  //   start: new Date("2023-02-01"),
-  //   end: new Date("2023-02-28"),
-  // },
+  "2023/02": {
+    start: new Date("2023-02-01"),
+    end: new Date("2023-02-28"),
+  },
 
-  // "2023/03": {
-  //   start: new Date("2023-03-01"),
-  //   end: new Date("2023-03-31"),
-  // },
+  "2023/03": {
+    start: new Date("2023-03-01"),
+    end: new Date("2023-03-31"),
+  },
 
-  // "2023/04": {
-  //   start: new Date("2023-04-01"),
-  //   end: new Date("2023-04-30"),
-  // },
+  "2023/04": {
+    start: new Date("2023-04-01"),
+    end: new Date("2023-04-30"),
+  },
 
-  // "2023/05": {
-  //   start: new Date("2023-05-01"),
-  //   end: new Date("2023-05-31"),
-  // },
+  "2023/05": {
+    start: new Date("2023-05-01"),
+    end: new Date("2023-05-31"),
+  },
 
-  // "2023/06": {
-  //   start: new Date("2023-06-01"),
-  //   end: new Date("2023-06-30"),
-  // },
+  "2023/06": {
+    start: new Date("2023-06-01"),
+    end: new Date("2023-06-30"),
+  },
 
   // "2023/07": {
   //   start: new Date("2023-07-01"),
