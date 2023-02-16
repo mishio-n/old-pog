@@ -19,6 +19,7 @@ export const RaceForm: React.FC<Props> = ({ onClose }) => {
   const [odds, setOdds] = useState(0);
   const [point, setPoint] = useState(0);
   const [date, setDate] = useState<Date>(new Date());
+  const [sending, setSending] = useState(false);
 
   const postRaceResult = useCallback(async () => {
     const body: Omit<Race, "id"> = {
@@ -30,6 +31,7 @@ export const RaceForm: React.FC<Props> = ({ onClose }) => {
       result,
     };
 
+    setSending(true);
     await fetch("/api/race", {
       method: "POST",
       headers: {
@@ -37,7 +39,9 @@ export const RaceForm: React.FC<Props> = ({ onClose }) => {
       },
       body: JSON.stringify(body),
     })
-      .then(() => onClose())
+      .then(() => {
+        onClose();
+      })
       .catch((error) => console.log(error));
   }, [routeParams, race, result, odds, point, date]);
 
@@ -136,7 +140,7 @@ export const RaceForm: React.FC<Props> = ({ onClose }) => {
             <button
               className="btn btn-info text-slate-50 w-[120px] shadow-md"
               onClick={() => postRaceResult()}
-              disabled={!canClick}
+              disabled={!canClick && !sending}
             >
               登録する
             </button>
