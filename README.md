@@ -1,6 +1,6 @@
 # pog
 
-## 2022-2023
+## THIS PROJECT IS IN MAINTENANCE
 
 ### ER Diagram
 
