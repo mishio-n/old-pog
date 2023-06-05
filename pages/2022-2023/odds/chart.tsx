@@ -82,26 +82,25 @@ const AGGREGATE_SPAN = {
     start: new Date("2023-06-01"),
     end: new Date("2023-06-30"),
   },
+  "2023/07": {
+    start: new Date("2023-07-01"),
+    end: new Date("2023-07-31"),
+  },
 
-  // "2023/07": {
-  //   start: new Date("2023-07-01"),
-  //   end: new Date("2023-07-31"),
-  // },
+  "2023/08": {
+    start: new Date("2023-08-01"),
+    end: new Date("2023-08-31"),
+  },
 
-  // "2023/08": {
-  //   start: new Date("2023-08-01"),
-  //   end: new Date("2023-08-31"),
-  // },
+  "2023/09": {
+    start: new Date("2023-09-01"),
+    end: new Date("2023-09-30"),
+  },
 
-  // "2023/09": {
-  //   start: new Date("2023-09-01"),
-  //   end: new Date("2023-09-30"),
-  // },
-
-  // "2023/10": {
-  //   start: new Date("2023-10-01"),
-  //   end: new Date("2023-10-31"),
-  // },
+  "2023/10": {
+    start: new Date("2023-10-01"),
+    end: new Date("2023-10-31"),
+  },
 } as const;
 
 type Props = {
